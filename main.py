@@ -148,9 +148,20 @@ def mqtt_messages(topic, msg, retained):
     except Exception as e:
         print("Fehler beim Verarbeiten der MQTT-Nachricht:", e)
 
-async def mqtt_up(client):
-    # In mqtt_as ist .subscribe() unschuldig und benötigt KEIN await!
-    client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
+# Wird aufgerufen, wenn die MQTT-Verbindung steht (übergibt das Client-Objekt)
+async def mqtt_connect_handler(client):
+    try:
+        await client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
+        print("MQTT-Topics erfolgreich abonniert.")
+    except Exception as e:
+        print("Fehler beim Abonnieren:", e)
+
+# Wird aufgerufen, wenn sich der WLAN-Status ändert (übergibt True oder False)
+async def wifi_status_handler(status):
+    if status:
+        print("WLAN verbunden.")
+    else:
+        print("WLAN-Verbindung verloren!")
 
 async def main():
     global mqtt_client
