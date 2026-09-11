@@ -69,10 +69,10 @@ You must enter the commands from the console line by line in the REPL interface.
     st.active(True)
     st.connect('<yourSSID>','<YourWifiPW>')
     import mip
+    mip.install('github:peterhinch/micropython-mqtt', '/lib/')
     mip.install('github:Newti04/Esp32S3TrumaInetBox2MqttWebsite/main.py','/')
     mip.install('github:Newti04/Esp32S3TrumaInetBox2MqttWebsite/web_pages.py','/')
     mip.install('github:Newti04/Esp32S3TrumaInetBox2MqttWebsite/config.json','/')
-    mip.install("github:peterhinch/micropython-mqtt")
     import main
 
 
