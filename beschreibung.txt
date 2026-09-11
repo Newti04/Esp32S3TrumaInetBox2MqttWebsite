@@ -1,0 +1,50 @@
+Für den stabilen Betrieb am LIN-Bus (TIN-Bus) der Truma-Heizung reicht es nicht aus, die Pins des ESP32-S3 direkt mit der Heizung zu verbinden. Da der LIN-Bus mit 12V-Pegeln arbeitet, der ESP32-S3 aber nur 3,3V verträgt, ist ein LIN-Transceiver-Baustein zwingend erforderlich.
+1. Empfohlene Hardware-Komponenten
+Mikrocontroller: Dein ESP32-S3 (z. B. ESP32-S3-DevKitC-1).
+LIN-Transceiver-Modul: Am einfachsten und sichersten im Aufbau sind fertige Breakout-Boards mit folgenden Chips:
+MCP2003 oder MCP2004 (sehr verbreitet, günstig und zuverlässig).
+TJA1020 oder TJA1021 (ebenfalls hervorragend geeignet).
+Stromversorgung: Ein hocheffizienter 12V-auf-5V-DC-DC-Abwärtswandler (Buck Converter), um den ESP32-S3 direkt aus dem 12V-Bordnetz des Wohnmobils zu versorgen.
+2. Schaltplan / Verkabelung
+Der LIN-Transceiver wird als Brücke zwischen der Truma-Heizung (12V-Logik) und dem ESP32-S3 (3,3V-Logik) geschaltet.
+Von (Quelle)	Signal / Pin	Nach (Ziel)	Bemerkung
+Truma RJ12-Buchse	12V (VBB)	DC-DC Wandler IN+ & Transceiver VBB	Versorgt die Elektronik aus der Heizung
+Truma RJ12-Buchse	GND	DC-DC Wandler IN- & Gesamte Masse	Gemeinsames Masse-Potenzial
+Truma RJ12-Buchse	LIN / TIN Bus	Transceiver LIN Pin	Die Datenader der Heizung
+DC-DC Wandler	5V OUT+	ESP32-S3 5V / VBUS Pin	Stromversorgung für den ESP
+ESP32-S3	GPIO 17 (TX)	Transceiver TXD Pin	Sende-Leitung zum Transceiver
+ESP32-S3	GPIO 18 (RX)	Transceiver RXD Pin	Empfangs-Leitung vom Transceiver
+ESP32-S3	3.3V OUT	Transceiver VIO / VCC	Logik-Referenzspannung (falls vorhanden)
+Transceiver	CS / WAKE	ESP32-S3 3.3V (Dauer-High)	Aktiviert den Transceiver-Chip
+Wichtiger Hinweis zum RJ12-Stecker: Die Truma CP Plus nutzt einen 6-poligen RJ12-Stecker. Miss vor dem Anschließen unbedingt mit einem Multimeter nach, auf welchen Pins die 12V und GND der Heizung liegen, um den ESP32-S3 nicht zu beschädigen.
+3. Warum der LIN-Transceiver wichtig ist
+Pegelwandlung: Er übersetzt die 12V-Signale des Busses sicher in die 3,3V, die dein ESP32-S3 verarbeiten kann.
+Schutzschaltung: Er filtert Spannungsspitzen (Spikes) aus dem Bordnetz des Wohnmobils, die beim Schalten von Pumpen oder Lampen entstehen, und schützt so den Mikrocontroller vor dem Durchbrennen.
+LIN-Konformität: Er sorgt für die exakten Flankensteilheiten bei der Übertragung mit 9600 Baud, die für eine fehlerfreie Kommunikation mit der CP Plus nötig sind
+1. Die Pinbelegung des Truma-Kabels (TIN-Bus RJ12)
+Die Truma-Heizung nutzt ein standardmäßiges, 6-poliges RJ12-Kabel (6P6C) im Straight-Format (1:1 durchbelegt). Wenn du die beiden Stecker nebeneinanderhältst, müssen die Aderfarben von links nach rechts absolut identisch sein. [1]
+Die Belegung an der Truma- bzw. CP-Plus-Buchse sieht wie folgt aus:
+Pin 1 (oder 6): Nicht belegt / Reserve
+Pin 2: 12V (Dauerplus / VBB) – Versorgt das originale Bedienteil.
+Pin 3: GND (Masse) – Das gemeinsame Minus-Potenzial des Bordnetzes.
+Pin 4: LIN / TIN Bus Signal – Die Eindraht-Datenleitung.
+Pin 5: GND (Masse) – Häufig zur Absicherung doppelt auf Masse gelegt. [1, 2]
+Sicherheitstipp: Da Truma-Kabel manchmal herstellerspezifische Aderfarben nutzen, orientiere dich nicht an den Farben, sondern immer an der Pin-Nummerierung auf dem Steckergehäuse. Miss vor der Verkabelung mit einem Multimeter nach: Zwischen den GND-Pins und dem 12V-Pin müssen ca. 12V bis 14,4V Bordspannung anliegen.
+2. Empfehlung für ein MCP2003 Breakout-Board
+Ein reiner MCP2003-Chip im DIP-Gehäuse benötigt zusätzliche externe Bauteile (z. B. Entstörkondensatoren und Pull-up-Widerstände). Wesentlich einfacher und sauberer klappt der Aufbau mit einem fertigen LIN-Bus Breakout-Board. [1, 2]
+Gute Optionen sind:
+Joy-IT / Waveshare LIN-Transceiver-Module: Diese nutzen oft den kompatiblen TJA1021 oder MCP2003, sind direkt für 3,3V-Mikrocontroller wie den ESP32-S3 ausgelegt und besitzen bereits die nötigen Schutzdioden gegen Spannungsspitzen im Wohnmobil. [1, 2]
+Ebay / Amazon "LIN Bus Transceiver Module": Suchst du nach "MCP2003 LIN Board" oder "TJA1020 Breakout", findest du kleine, rote oder blaue Platinen mit Schraubklemmen für die 12V-Busseite und Stiftleisten für die ESP32-Seite.
+3. Anschluss des Breakout-Boards im Detail
+Die meisten MCP2003-Breakouts haben zwei Seiten. So verbindest du sie:
+Controller-Seite (3,3V Logik zum ESP32-S3):
+TX / TXD: Verbinde diesen Pin mit GPIO 17 des ESP32-S3.
+RX / RXD: Verbinde diesen Pin mit GPIO 18 des ESP32-S3.
+VCC / VIO: Verbinde diesen Pin mit dem 3.3V-Ausgang des ESP32-S3 (Wichtig für die Signalpegel!).
+GND: Verbinde diesen mit dem GND des ESP32-S3.
+CS / EN (Chip Select / Enable): Dieser Pin muss zwingend auf High (3,3V) gelegt werden, damit der Transceiver aufwacht und aktiv wird. [1]
+LIN-Bus-Seite (12V Logik zur Heizung):
+VBB / VBAT: Verbinde diesen mit Pin 2 (12V) des RJ12-Kabels.
+GND: Verbinde diesen mit Pin 3 oder 5 (GND) des RJ12-Kabels.
+LIN / LBUS: Verbinde diesen mit Pin 4 (LIN) des RJ12-Kabels. [1]
+Wichtig für den ESP32-S3: Achte darauf, dass du dem Transceiver-Board auf der Logikseite (VCC/VIO) 3,3Vvom ESP32-S3 zuführst, damit die RX/TX-Leitungen keine 5V-Spannung an die empfindlichen GPIOs des S3 abgeben.

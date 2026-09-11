@@ -1,4 +1,3 @@
-web_pages.py
 
 def get_dashboard_html(control_state, status_state):
     p_status = "AN" if control_state["power"] else "AUS"

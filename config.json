@@ -3,7 +3,7 @@
         "ssid": "DEIN_WLAN_NAME",
         "password": "DEIN_WLAN_PASSWORT",
         "ap_ssid": "Truma_iNet_Fallback",
-        "ap_password": "InsecurePassword123",
+        "ap_password": "1234567890",
         "conn_timeout": 15
     },
     "mqtt": {
