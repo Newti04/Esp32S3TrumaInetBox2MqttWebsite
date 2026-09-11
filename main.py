@@ -88,7 +88,8 @@ async def handle_client(reader, writer):
         try: await writer.close()
         except: pass
 
-async def start_webserver(): await asyncio.start_server(handle_client, "0.0.0.0", 80)
+async def start_webserver():
+    await asyncio.start_server(handle_client, "0.0.0.0", 80)
 
 def calc_lin_checksum(data):
     s = sum(data)
@@ -144,7 +145,8 @@ async def mqtt_messages(client):
             modes = {"OFF": 0, "ECO": 1, "HIGH": 2, "BOOST": 3}
             if m.upper() in modes: control_state["water_mode"] = modes[m.upper()]
 
-async def mqtt_up(client): await client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
+async def mqtt_up(client):
+    await client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
 
 async def main():
     global mqtt_client
