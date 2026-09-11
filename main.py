@@ -168,20 +168,19 @@ async def main():
     is_sta = await setup_network()
     asyncio.create_task(start_webserver())
     asyncio.create_task(truma_lin_loop())
-        if is_sta:
+    if is_sta:
         mqtt_config['server'], mqtt_config['port'] = cfg['mqtt']['broker'], cfg['mqtt']['port']
         mqtt_config['user'], mqtt_config['pass'] = cfg['mqtt']['user'], cfg['mqtt']['password']
         mqtt_config['client_id'] = cfg['mqtt']['client_id']
         
-        # Hier die Callbacks richtig zuweisen:
-        mqtt_config['subs_cb'] = mqtt_messages  # Die synchrone Funktion von oben
-        mqtt_config['wifi_coro'] = mqtt_up      # Wird bei WLAN-Up aufgerufen
-        mqtt_config['connect_coro'] = mqtt_up   # Wird bei MQTT-Verbindung aufgerufen
+        # Hier die korrigierten Callbacks eintragen:
+        mqtt_config['subs_cb'] = mqtt_messages       # Synchone Funktion (aus dem vorigen Schritt)
+        mqtt_config['wifi_coro'] = wifi_status_handler  # Behandelt den WLAN-Status (Boolean)
+        mqtt_config['connect_coro'] = mqtt_connect_handler  # Behandelt die Verbindung (Client-Objekt)
         
         MQTTClient.SIGNAL_CONN = True
         mqtt_client = MQTTClient(mqtt_config)
         try:
-            # connect() startet bei mqtt_as die Hintergrund-Schleife automatisch
             await mqtt_client.connect()
         except Exception as e:
             print("MQTT error:", e)
