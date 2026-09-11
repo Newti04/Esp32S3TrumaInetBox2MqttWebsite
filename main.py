@@ -133,17 +133,20 @@ async def truma_lin_loop():
                         if raw[-1] == calc_lin_checksum(raw[:-1]): decode_truma_frame(frame_id, raw[:-1])
         await asyncio.sleep_ms(2)
 
-async def mqtt_messages(client):
+def mqtt_messages(topic, msg, retained):
     global control_state
-    async for topic, msg, ret in client.queue:
+    try:
         t, m = topic.decode(), msg.decode()
-        if "set/power" in t: control_state["power"] = m.upper() in ("ON", "TRUE", "1")
+        if "set/power" in t: 
+            control_state["power"] = m.upper() in ("ON", "TRUE", "1")
         elif "set/target_temp" in t and control_state["power"]:
             try: control_state["target_room_temp"] = max(5, min(30, int(float(m))))
             except: pass
         elif "set/water_mode" in t and control_state["power"]:
             modes = {"OFF": 0, "ECO": 1, "HIGH": 2, "BOOST": 3}
             if m.upper() in modes: control_state["water_mode"] = modes[m.upper()]
+    except Exception as e:
+        print("Fehler beim Verarbeiten der MQTT-Nachricht:", e)
 
 async def mqtt_up(client):
     await client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
