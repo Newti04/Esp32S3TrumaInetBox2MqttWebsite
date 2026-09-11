@@ -52,14 +52,20 @@ def url_decode(s):
 async def handle_client(reader, writer):
     global cfg, control_state
     try:
-        req = (await reader.readline()).decode("utf-8").split(" ")
-        if len(req) < 2: return
-        method, path, content_length = req, req, 0
+        raw_req = (await reader.readline()).decode("utf-8").split(" ")
+        if len(raw_req) < 2: return
+        
+        # Richtig: Elemente einzeln aus der Liste extrahieren
+        method = raw_req[0]
+        path = raw_req[1]
+        content_length = 0
+        
         while True:
             line = await reader.readline()
             if line in (b"\r\n", b"\n"): break
-            if b"Content-Length:" in line: content_length = int(line.split(b":").strip())
-            
+            if b"Content-Length:" in line: 
+                content_length = int(line.split(b":")[1].strip())
+
         if method == "GET" and path == "/": 
             await writer.write(web_pages.get_dashboard_html(control_state, status_state))
         elif method == "GET" and path == "/config": 
