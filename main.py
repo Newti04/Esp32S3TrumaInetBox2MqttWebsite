@@ -149,7 +149,8 @@ def mqtt_messages(topic, msg, retained):
         print("Fehler beim Verarbeiten der MQTT-Nachricht:", e)
 
 async def mqtt_up(client):
-    await client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
+    # In mqtt_as ist .subscribe() unschuldig und benötigt KEIN await!
+    client.subscribe(f"{cfg['mqtt']['topic_prefix']}/set/#")
 
 async def main():
     global mqtt_client
