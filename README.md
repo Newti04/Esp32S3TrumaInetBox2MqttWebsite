@@ -1,28 +1,17 @@
 
-# inetbox2mqtt
-## Control your TRUMA heater and/or Aventa aircon over a MQTT broker
+# TrumaInetBox2MqttWebsite
+## Control your TRUMA heater over a MQTT broker and a Website on a ESP32-S3
 
-### Version for different ESP32-HW and RP pico w (latest release: 2.6.4)
+### Version for ESP32-S3 Hardware
 <br/>
 
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
  &nbsp;
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
-
 </div>
 <br>
 
 - **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **new: Full control of TRUMA Combi-heater and TRUMA Aventa air conditioning modes**.
-- **new: Support of different hw constellations via pin configuration tables**
-- **new: Support of different mqtt ports and static IP-configuration**
-- **new: Support of LAN-connections**
-- **Input credentials over web-frontend**
-- **Test mqtt-connectivity and lin-interface in web-frontend**
-- **OTA-updating support with releasing**
-- **Tested in different hw constellations (with ESP32 or RP2 pico w 2040)**
-- **Include add-on: Optional Truma DuoControl over GPIO-connections**
-- **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
+- **Control of TRUMA Combi 4/6 Gas-heater conditioning modes**.
 - **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
 
 ## Motivation and background
@@ -50,7 +39,7 @@ Please ensure that your tests are carried out with a clean electrical setup, pre
 Please note that this simulation only works on a CPplus to which **NO** Inetbox is connected. In particular, communication with a **TRUMA INet X** is not supported.
 **TRUMA INet X** is the successor of CPplus and contains inetbox functionalities
 
-The LIN module for the ESP32/RP2 pico in the current version for the ESP32/RP2 pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
+The LIN module for the ESP32-S3 in the current version for the ESP32-S3 have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
 
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
