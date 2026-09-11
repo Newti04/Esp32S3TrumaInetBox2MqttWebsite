@@ -1,10 +1,9 @@
-
 def get_dashboard_html(control_state, status_state):
     p_status = "AN" if control_state["power"] else "AUS"
     p_color = "#28a745" if control_state["power"] else "#dc3545"
     w_modes = ["OFF", "ECO", "HIGH", "BOOST"]
-    return f"""HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n
-    <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    # WICHTIG: Kein Zeilenumbruch nach f"""
+    return f"""HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Truma Controller</title><style>
     body {{ font-family: Arial; text-align: center; background: #f4f4f9; padding: 20px; }}
     .container {{ max-width: 450px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }}
@@ -26,9 +25,8 @@ def get_dashboard_html(control_state, status_state):
     <script>setTimeout(()=>location.reload(), 5000);</script></body></html>"""
 
 def get_settings_html(cfg):
-    return f"""HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n
-    <!DOCTYPE html><html><head><meta charset="utf-8"><title>Config</title><style>body{{font-family:Arial;padding:20px;}}input{{width:100%;padding:8px;margin:5px 0;}}button{{background:#28a745;color:white;padding:10px;border:none;}}</style></head>
+    # WICHTIG: Kein Zeilenumbruch nach f"""
+    return f"""HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<!DOCTYPE html><html><head><meta charset="utf-8"><title>Config</title><style>body{{font-family:Arial;padding:20px;}}input{{width:100%;padding:8px;margin:5px 0;}}button{{background:#28a745;color:white;padding:10px;border:none;}}</style></head>
     <body><h1>System-WLAN & MQTT</h1><p><a href="/">&larr; Dashboard</a></p><form method="POST" action="/save">
     <label>WLAN SSID:</label><input type="text" name="wf_ssid" value="{cfg['wifi']['ssid']}"><label>WLAN Passwort:</label><input type="password" name="wf_pass" value="{cfg['wifi']['password']}">
     <label>MQTT Broker IP:</label><input type="text" name="mq_brk" value="{cfg['mqtt']['broker']}"><button type="submit">Speichern & Neustarten</button></form></body></html>"""
-    
